@@ -18,8 +18,8 @@ public class BlockingList<T>  {
 
   private int size;
 
-   private Node head;
-   private Node last;
+  private Node head;
+  private Node last;
 
 
   private void enqueue(Node node) {
