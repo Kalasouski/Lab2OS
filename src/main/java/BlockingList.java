@@ -2,12 +2,15 @@
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class BlockingList<T>  {
+public class BlockingList<T> {
 
-  private class Node{
+  private class Node {
     T item;
     Node next;
-    Node(T item){this.item = item;}
+
+    Node(T item) {
+      this.item = item;
+    }
   }
 
   private final ReentrantLock lock = new ReentrantLock();
@@ -18,8 +21,8 @@ public class BlockingList<T>  {
 
   private int size;
 
-   private Node head;
-   private Node last;
+  private Node head;
+  private Node last;
 
 
   private void enqueue(Node node) {
@@ -33,7 +36,7 @@ public class BlockingList<T>  {
     size = 0;
   }
 
-  public BlockingList(){
+  public BlockingList() {
     this(Integer.MAX_VALUE);
   }
 
@@ -54,7 +57,7 @@ public class BlockingList<T>  {
 
       enqueue(node);
       size++;
-      if(size==1)
+      if (size == 1)
         head = node;
 
       if (size < capacity)
@@ -64,79 +67,71 @@ public class BlockingList<T>  {
     }
   }
 
-  public T get(int index){
+  public T get(int index) {
     final ReentrantLock lock = this.lock;
     lock.lock();
-    try{
-      if(index >= size)
+    try {
+      if (index >= size)
         throw new IllegalArgumentException();
 
       Node node = head;
-      for(int i = 0;i<index;i++)
+      for (int i = 0; i < index; i++)
         node = node.next;
       return node.item;
 
-    }
-    finally{
+    } finally {
       lock.unlock();
     }
   }
 
-  public void remove(int index){
+  public void remove(int index) {
 
     final ReentrantLock lock = this.lock;
     lock.lock();
 
-    try{
-      if(index >= size || index<0)
+    try {
+      if (index >= size || index < 0)
         throw new IllegalArgumentException();
 
       size--;
 
-      if(size==0){
+      if (size == 0) {
         head = last = new Node(null);
         return;
       }
-      if(index == 0){
+      if (index == 0) {
         head = head.next;
 
-      }
-      else{
+      } else {
         Node prev = null;
         Node node = head;
 
 
-        for(int i = 0;i<index;i++){
+        for (int i = 0; i < index; i++) {
           prev = node;
           node = node.next;
         }
 
         prev.next = node.next;
 
-        if(index==size)
+        if (index == size)
           last = prev;
       }
-      if(capacity>=size)
+      if (capacity >= size)
         notFull.signal();
-    }
-    finally{
+    } finally {
       lock.unlock();
     }
   }
 
-  void order(){
+  void order() {
     Node node = head;
-    for(int i = 0;i<size;i++){
-      System.out.print(node.item+" ");
+    for (int i = 0; i < size; i++) {
+      System.out.print(node.item + " ");
       node = node.next;
 
     }
   }
-
-
-
-
-
 
 
 }
